@@ -1,9 +1,12 @@
 package config
 
 import (
+	"log"
+	"os"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -11,7 +14,19 @@ var (
 )
 
 func Connect(){
-	d, err := gorm.Open("mysql", "gouser:lido123@/goBookStore?charset=utf8&parseTime=True&loc=Local")
+	// load env file
+	err := godotenv.Load()
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
+
+    // Get the DB URL from the environment variable
+    dbURL := os.Getenv("DB_URL")
+    if dbURL == "" {
+        log.Fatal("DB_URL is not set in the environment")
+    }
+
+	d, err := gorm.Open("mysql", dbURL)
 
 	if err != nil{
 		panic((err))
